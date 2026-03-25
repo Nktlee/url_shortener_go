@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/ilyakaznacheev/cleanenv"
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -21,10 +22,13 @@ type HTTPServer struct {
 }
 
 func MustLoad() *Config {
+	if err := godotenv.Load(); err != nil {
+		log.Printf(".env не найден: %v", err)
+	}
+
 	configPath := os.Getenv("CONFIG_PATH")
 	if configPath == "" {
-		configPath = "config/local.yaml"
-		log.Printf("CONFIG_PATH not set, using default: %s", configPath)
+		log.Printf("CONFIG_PATH not set")
 	}
 
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
